@@ -1,3 +1,10 @@
+package controllers;
+
+import model.Task;
+import model.SubTask;
+import model.Epic;
+import model.Status;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,7 +15,7 @@ public class TaskManager {
     private HashMap<Integer, SubTask> subTaskList;
     private HashMap<Integer, Epic> epicList;
 
-    TaskManager(){
+    public TaskManager(){
         taskList = new HashMap<>();
         subTaskList = new HashMap<>();
         epicList = new HashMap<>();
@@ -70,7 +77,6 @@ public class TaskManager {
     public SubTask createSubTask(SubTask subTask){
         Epic epic = epicList.get(subTask.getEpicId());
         if (epic == null) {
-            System.out.println("Эпика " + subTask.getEpicId() + "нет");
             return null;
         }
         int id = countIdTask();
@@ -122,9 +128,11 @@ public class TaskManager {
             }
             if (subTask.getStatus().equals(Status.IN_PROGRESS)) {
                 epic.setStatus(Status.IN_PROGRESS);
+                return;
             }
             if (!subTask.getStatus().equals(Status.NEW)) {
                 statusNew = false;
+                return;
             }
             if (!subTask.getStatus().equals(Status.DONE)) {
                 statusDone = false;
