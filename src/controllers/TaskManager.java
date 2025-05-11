@@ -1,182 +1,50 @@
 package controllers;
 
-import model.Task;
-import model.SubTask;
 import model.Epic;
-import model.Status;
+import model.SubTask;
+import model.Task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
-public class TaskManager {
-    private int idTask = 0;
+public interface TaskManager {
 
-    private HashMap<Integer, Task> taskList;
-    private HashMap<Integer, SubTask> subTaskList;
-    private HashMap<Integer, Epic> epicList;
+    int countIdTask();
 
-    public TaskManager(){
-        taskList = new HashMap<>();
-        subTaskList = new HashMap<>();
-        epicList = new HashMap<>();
-    }
+    ArrayList<Task> getTaskList();
 
-    private int countIdTask(){
-        idTask++;
-        return idTask;
-    }
+    ArrayList<SubTask> getSubTaskList();
 
-    public ArrayList<Task> getTaskList() {
-        return new ArrayList<>(taskList.values());
-    }
+    ArrayList<Epic> getEpicList();
 
-    public ArrayList<SubTask> getSubTaskList() {
-        return new ArrayList<>(subTaskList.values());
-    }
+    void deleteTaskList();
 
-    public ArrayList<Epic> getEpicList() {
-        return new ArrayList<>(epicList.values());
-    }
+    void deleteSubTaskList();
 
-    public void deleteTaskList() {
-        taskList.clear();
-    }
+    void deleteEpicList();
 
-    public void deleteSubTaskList() {
-        subTaskList.clear();
-        for (Epic epic : epicList.values()) {
-            epic.getSubtask().clear();
-            updateEpicStatus(epic.getId());
-        }
-    }
+    Task getTaskForID(int id);
 
-    public void deleteEpicList() {
-        epicList.clear();
-        deleteSubTaskList();
-    }
+    SubTask getSubTaskForID(int id);
 
-    public Task getTaskForID(int id) {
-        return taskList.get(id);
-    }
+    Epic getEpicForID(int id);
 
-    public SubTask getSubTaskForID(int id) {
-        return subTaskList.get(id);
-    }
+    Task createTask(Task task);
 
-    public Epic getEpicForID(int id) {
-        return epicList.get(id);
-    }
+    SubTask createSubTask(SubTask subTask);
 
-    public Task createTask(Task task) {
-        int id = countIdTask();
-        task.setId(id);
-        taskList.put(task.getId(), task);
-        return task;
-    }
+    Epic createEpic(Epic epic);
 
-    public SubTask createSubTask(SubTask subTask){
-        Epic epic = epicList.get(subTask.getEpicId());
-        if (epic == null) {
-            return null;
-        }
-        int id = countIdTask();
-        subTask.setId(id);
-        subTaskList.put(subTask.getId(), subTask);
-        epic.addSubtask(subTask.getId());
-        updateEpicStatus(epic.getId());
-        return subTask;
-    }
+    void updateTask(Task task);
 
-    public Epic createEpic(Epic epic){
-        int id = countIdTask();
-        epic.setId(id);
-        epicList.put(epic.getId(), epic);
-        return epic;
-    }
+    void updateSubTask(SubTask subTask);
 
-    public void updateTask(Task task) {
-        taskList.put(task.getId(), task);
-    }
+    void updateEpic(Epic epic);
 
-    public void updateSubTask(SubTask subTask) {
-        subTaskList.put(subTask.getId(), subTask);
-        updateEpicStatus((subTask.getEpicId()));
-    }
+    void deleteTaskForID(int id);
 
-    public void updateEpic(Epic epic) {
-        epicList.put(epic.getId(), epic);
-    }
+    void deleteSubTaskForID(int id);
 
-    public void updateEpicStatus(int epicId){
-        boolean statusNew = true;
-        boolean statusDone = true;
+    void deleteEpicForID(int id);
 
-        Epic epic = epicList.get(epicId);
-        ArrayList<Integer> subTasks = epic.getSubtask();
-
-        if (epic == null) {
-            return;
-        } else if (subTasks.isEmpty()) {
-            epic.setStatus(Status.NEW);
-            return;
-        }
-
-        for (int subTaskID : subTasks) {
-            SubTask subTask = subTaskList.get(subTaskID);
-            if (subTask == null) {
-                continue;
-            }
-            if (subTask.getStatus().equals(Status.IN_PROGRESS)) {
-                epic.setStatus(Status.IN_PROGRESS);
-                return;
-            }
-            if (!subTask.getStatus().equals(Status.NEW)) {
-                statusNew = false;
-                return;
-            }
-            if (!subTask.getStatus().equals(Status.DONE)) {
-                statusDone = false;
-            }
-        }
-        if (statusDone) {
-            epic.setStatus((Status.DONE));
-        } else if (statusNew) {
-            epic.setStatus(Status.NEW);
-        } else {
-            epic.setStatus((Status.IN_PROGRESS));
-        }
-    }
-
-    public  void deleteTaskForID(int id) {
-        taskList.remove(id);
-    }
-
-    public void deleteSubTaskForID(int id) {
-        SubTask subTask = subTaskList.get(id);
-        subTaskList.remove(id);
-        Epic epic = epicList.get(subTask.getEpicId());
-        if (epic != null) {
-            epic.removeSubtask(id);
-            updateEpicStatus(epic.getId());
-        }
-    }
-
-    public void deleteEpicForID(int id) {
-        Epic epic = epicList.get(id);
-        for (int subTaskID : epic.getSubtask()) {
-            subTaskList.remove(subTaskID);
-        }
-        epicList.remove(id);
-    }
-
-    public ArrayList<SubTask> getSubTaskForEpic(int epicId) {
-        ArrayList<SubTask> array = new ArrayList<>();
-        Epic epic = epicList.get(epicId);
-        if (epic != null) {
-            for (int subTaskId : epic.getSubtask()) {
-                array.add(subTaskList.get(subTaskId));
-            }
-        }
-        return array;
-    }
 }
