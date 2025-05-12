@@ -1,13 +1,14 @@
 import controllers.InMemoryHistoryManager;
 import controllers.InMemoryTaskManager;
 import controllers.Managers;
+import controllers.TaskManager;
 import model.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        InMemoryTaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
 
         //TASK
         Task task1 = new Task("Window", "Wash window");
@@ -33,7 +34,7 @@ public class Main {
         printHistory(taskManager);
     }
 
-    private static void printAllTasks(InMemoryTaskManager manager) {
+    private static void printAllTasks(TaskManager manager) {
         System.out.println("Задачи:");
         for (Task task : manager.getTaskList()) {
             System.out.println(task);
@@ -52,7 +53,7 @@ public class Main {
         }
     }
 
-    private static void printHistory(InMemoryTaskManager manager) {
+    private static void printHistory(TaskManager manager) {
         manager.getTaskForID(1);
         manager.getTaskForID(3);
         manager.getTaskForID(2);

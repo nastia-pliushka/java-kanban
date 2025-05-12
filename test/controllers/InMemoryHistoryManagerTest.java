@@ -13,7 +13,7 @@ import java.util.List;
 
 class InMemoryHistoryManagerTest {
 
-    private static InMemoryTaskManager taskManager;
+    private static TaskManager taskManager;
 
     @BeforeEach
     public void beforeEach() {
